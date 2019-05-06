@@ -1,0 +1,131 @@
+<!DOCTYPE <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="css/sticky.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+      crossorigin="anonymous"
+    />
+    <!-- <script src="js/jQuery 3.4.0.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/jquery.initialize.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web-animations/2.3.1/web-animations.min.js"></script>
+    <script src="js/muuri.js"></script>
+    <script src="js/z-main.js"></script>
+  </head>
+  <body>
+    <div class="grid">
+      <div class="item">
+        <div class="item-content">
+          <div class="sticky-note">
+            <i class="far fa-times-circle"></i>
+            <textarea class="note">
+This is a sticky note you can type and edit.</textarea
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="create" class="btn" onClick="addEvent()">+</div>
+    <script>
+var boardGrid;
+// var columnGrids = [];
+
+document.addEventListener("DOMContentLoaded", function() {
+  var gridElement = document.querySelector(".grid");
+  gridElement.addEventListener("click", function(e) {
+    if (elementMatches(e.target, ".sticky-note i")) {
+      removeItem(e);
+    }
+  });
+});
+
+// Create Sticky Note With Random Color
+function generateBoard() {
+  var color = random_color();
+  var itemElem = document.createElement("div");
+  var itemTemplate =
+    "" +
+    '<div class="item">' +
+    '<div class="item-content">' +
+    '<div class="sticky-note">' +
+    '<i class="far fa-times-circle"></i>' +
+    '<textarea class="note" style="background-color:' +
+    color +
+    '"></textarea>' +
+    "</div>" +
+    "</div>" +
+    "</div>";
+  itemElem.innerHTML = itemTemplate;
+  return itemElem.firstChild;
+}
+
+// Initiate Murri for dragging 
+var muuri = new Muuri(".grid", {
+  dragEnabled: true,
+  dragAxis: "xy",
+  dragStartPredicate: {
+    distance: 10,
+    delay: 100,
+    handle: ".item"
+  }
+});
+
+function random_color() {
+  var color = "#"; // hexadecimal starting symbol
+  var letters = ["ffeaa7", "fab1a0", "636e72", "a29bfe","81ecec"]; //Set your colors here
+  color += letters[Math.floor(Math.random() * letters.length)];
+  return color;
+}
+function addEvent() {
+  muuri.add(generateBoard());
+}
+function elementMatches(element, selector) {
+  var p = Element.prototype;
+  return (
+    p.matches ||
+    p.matchesSelector ||
+    p.webkitMatchesSelector ||
+    p.mozMatchesSelector ||
+    p.msMatchesSelector ||
+    p.oMatchesSelector
+  ).call(element, selector);
+}
+function elementClosest(element, selector) {
+  if (window.Element && !Element.prototype.closest) {
+    var isMatch = elementMatches(element, selector);
+    while (!isMatch && element && element !== document) {
+      element = element.parentNode;
+      isMatch =
+        element &&
+        element !== document &&
+        elementMatches(element, selector);
+    }
+    return element && element !== document ? element : null;
+  } else {
+    return element.closest(selector);
+  }
+}
+
+function removeItem(e) {
+  var elem = elementClosest(e.target, ".item");
+  muuri.hide(elem, {
+    onFinish: function(items) {
+      var item = items[0];
+      muuri.remove(item, { removeElements: true });
+    }
+  });
+}
+let btn = document.getElementById("create");
+
+    </script>
+  </body>
+</html>
